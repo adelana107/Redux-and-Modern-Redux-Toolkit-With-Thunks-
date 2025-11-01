@@ -1,70 +1,148 @@
-# Getting Started with Create React App
+🏦 React-Redux Bank App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A simple banking application built with React and Redux Toolkit that demonstrates state management, asynchronous actions, and component interaction using Redux and React-Redux hooks.
 
-## Available Scripts
+🚀 Features
 
-In the project directory, you can run:
+Create a new customer profile with full name and national ID
 
-### `npm start`
+Deposit and withdraw money
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Request and repay loans
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Display account balance and loan status
 
-### `npm test`
+Currency conversion when depositing in non-USD currencies
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Global state management using Redux Toolkit and React-Redux
 
-### `npm run build`
+🧩 Project Structure
+src/
+│
+├── features/
+│   ├── accounts/
+│   │   ├── AccountOperations.js
+│   │   ├── BalanceDisplay.js
+│   │   └── accountSlice.js
+│   │
+│   └── customers/
+│       ├── CreateCustomer.js
+│       ├── Customer.js
+│       └── customerSlice.js
+│
+├── store.js
+└── App.js
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+⚙️ Technologies Used
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+React (Functional Components + Hooks)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Redux Toolkit
 
-### `npm run eject`
+React-Redux
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Redux Thunk
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+JavaScript (ES6+)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Vite / Create React App (depending on setup)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+📦 Installation
 
-## Learn More
+Clone the repository
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+git clone https://github.com/yourusername/redux-bank.git
+cd redux-bank
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+Install dependencies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+npm install
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Run the app
 
-### Making a Progressive Web App
+npm run dev
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
+Open your browser at http://localhost:5173
+ (for Vite) or http://localhost:3000
+ (for CRA)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+🧠 How It Works
 
-### Deployment
+The app starts with an empty customer state.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Once a customer is created, the user gains access to account operations:
 
-### `npm run build` fails to minify
+Deposit (supports currency conversion via Frankfurter API
+)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Withdraw funds
+
+Request and pay off a loan
+
+Redux Toolkit slices (accountSlice and customerSlice) manage actions and reducers.
+
+The store.js combines both slices and provides the global Redux store to the app.
+
+📁 Example Components
+App.js
+import CreateCustomer from "./features/customers/CreateCustomer";
+import Customer from "./features/customers/Customer";
+import AccountOperations from "./features/accounts/AccountOperations";
+import BalanceDisplay from "./features/accounts/BalanceDisplay";
+import { useSelector } from "react-redux";
+
+function App() {
+  const fullName = useSelector((state) => state.customer.fullName);
+
+  return (
+    <div>
+      <h1>🏦 The React-Redux Bank ⚛️</h1>
+      {fullName === "" ? (
+        <CreateCustomer />
+      ) : (
+        <>
+          <Customer />
+          <AccountOperations />
+          <BalanceDisplay />
+        </>
+      )}
+    </div>
+  );
+}
+
+export default App;
+
+🌐 API Reference
+
+The app uses the Frankfurter API for real-time currency conversion:
+
+GET https://api.frankfurter.app/latest?amount={amount}&from={currency}&to=USD
+
+🧩 Example Redux Logic
+Deposit Thunk (in accountSlice.js)
+export function deposit(amount, currency = "USD") {
+  if (currency === "USD") return { type: "account/deposit", payload: amount };
+
+  return async function (dispatch) {
+    dispatch({ type: "account/convertingCurrency" });
+    const res = await fetch(
+      `https://api.frankfurter.app/latest?amount=${amount}&from=${currency}&to=USD`
+    );
+    const data = await res.json();
+    dispatch({ type: "account/deposit", payload: data.rates.USD });
+  };
+}
+
+🧰 Dev Tools
+
+Redux DevTools (Browser Extension)
+
+React Developer Tools
+
+🧑‍💻 Author
+
+Adelana Oluwafunmibi Cornelius
+💼 Frontend Developer | React & Redux Enthusiast
